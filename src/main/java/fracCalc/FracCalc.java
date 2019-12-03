@@ -78,7 +78,7 @@ public class FracCalc {
 					int newDenominator = denominator1;
 					answer = newNumerator + "/" + newDenominator;
 				} else {
-					newNumerator += numerator1 + numerator2;
+					newNumerator += (newNumerator1 + newNumerator2);
 					answer = newNumerator + "/" + denominator1;
 				}
 			}
@@ -133,11 +133,12 @@ public class FracCalc {
 		if (operator.indexOf("/") != -1) {
 			if (numerator1 == 0 && numerator2 == 0 && denominator1 == 1 && denominator2 == 1) {
 				int wholeDivided = whole1 / whole2;
-				int wholeRemainder = whole1 % whole2;
+				int wholeRemainder = Math.abs(whole1 % whole2);
+				System.out.println(wholeRemainder);
 				if (wholeRemainder == 0) {
 					answer = wholeDivided + "";
 				} else {
-					answer = wholeDivided + "_" + Math.abs(wholeRemainder) + "/" + whole2;
+					answer = wholeDivided + "_" + Math.abs(wholeRemainder) + "/" + Math.abs(whole2);
 				}
 				// two fractions
 			} else if (whole1 == 0 && whole2 == 0) {
@@ -189,7 +190,13 @@ public class FracCalc {
 				}
 				int finalNumerator = newNum1 * denominator2;
 				int finalDenominator = denominator1 * newNum2;
+				if(finalNumerator < 0 && finalDenominator < 0) {
+					answer = Math.abs(finalNumerator) + "/" + Math.abs(finalDenominator);
+				} else if(finalDenominator < 0 && finalNumerator > 0) {
+					answer = "-" + finalNumerator + "/" + Math.abs(finalDenominator);
+				} else {
 				answer = finalNumerator + "/" + finalDenominator;
+				}
 				// whole number divided by a mixed number
 			} else if (secondNumber.indexOf("_") != -1 && firstNumber.indexOf("_") == -1
 					&& firstNumber.indexOf("/") == -1) {
@@ -314,8 +321,8 @@ public class FracCalc {
 			}
 		}
 		// notes: get rid of 0/x and make 0/0 not an answer
-		System.out.println(answer);
-		//simplifier(answer);
+		//System.out.println(answer);
+		answer = simplifier(answer);
 		return (answer);
 	}
 
@@ -362,12 +369,12 @@ public class FracCalc {
 
 	public static int gcd(int numerator, int denominator) {
 		int gcd = 1;
-		int smaller = numerator;
-		if (numerator > denominator) {
+		int smaller = Math.abs(numerator);
+		if (Math.abs(numerator) > Math.abs(denominator)) {
 			smaller = denominator;
 		}
-		if (numerator == denominator) {
-			gcd = numerator;
+		if (Math.abs(numerator) == denominator) {
+			gcd = Math.abs(numerator);
 		} else {
 			for (int i = smaller; i >= 2; i--) {
 				if (numerator % i == 0 && denominator % i == 0) {
@@ -376,25 +383,6 @@ public class FracCalc {
 			}
 		}
 		return gcd;
-	}
-
-	public static int gcd2(int numerator, int denominator) {
-		int x;
-		while (numerator != 0 && denominator != 0) {
-			if (numerator > denominator) {
-				numerator = numerator % denominator;
-			} else {
-				denominator = denominator % numerator;
-			}
-		}
-		if (numerator != 0) {
-			x = numerator;
-		} else if (denominator != 0) {
-			x = denominator;
-		} else {
-			x = 1;
-		}
-		return x;
 	}
 
 	public static String simplifier(String answer) {
@@ -409,15 +397,44 @@ public class FracCalc {
 			numerator *= 1.0;
 			if (numerator == denominator) {
 				finalAnswer = "1";
+			} else if (numerator == 0) {
+				finalAnswer = "0";
 			} else if (Math.abs(numerator) <= denominator) {
 				int x = gcd(numerator, denominator);
-				// int x = gcd2(numerator, denominator);
 				if (x != 0) {
 					finalAnswer = (numerator / x) + "/" + (denominator / x);
 				} else {
 					finalAnswer = numerator + "/" + denominator;
 				}
 
+			} else if (denominator <= Math.abs(numerator)) {
+				whole += numerator / denominator;
+				numerator -= (whole * denominator);
+				if (numerator == 0) {
+					finalAnswer = whole + "";
+				} else {
+					numerator = Math.abs(numerator);
+					int x = gcd(numerator, denominator);
+					if (x != 0) {
+						finalAnswer = whole + "_" + (numerator / x) + "/" + Math.abs((denominator / x));
+					} else {
+						finalAnswer = whole + "_" + numerator + "/" + denominator;
+					}
+				}
+			}
+		} else if (whole != 0) {
+			numerator *= 1.0;
+			if (numerator == denominator) {
+				finalAnswer = (whole + 1) + "";
+			} else if (numerator == 0) {
+				finalAnswer = whole + "";
+			} else if (Math.abs(numerator) <= denominator) {
+				int x = gcd(numerator, denominator);
+				if (x != 0) {
+					finalAnswer = whole + "_" + (numerator / x) + "/" + (denominator / x);
+				} else {
+					finalAnswer = whole + "_" + numerator + "/" + denominator;
+				}
 			} else if (denominator <= Math.abs(numerator)) {
 				whole += numerator / denominator;
 				numerator -= (whole * denominator);
@@ -428,35 +445,9 @@ public class FracCalc {
 				} else {
 					finalAnswer = whole + "_" + numerator + "/" + denominator;
 				}
-			} 
-		}else {
-				numerator *= 1.0;
-				if (numerator == denominator) {
-					finalAnswer = (whole + 1) + "";
-				} else if (Math.abs(numerator) <= denominator) {
-					int x = gcd(numerator, denominator);
-					if (x != 0) {
-						finalAnswer = whole + "_" + (numerator / x) + "/" + (denominator / x);
-					} else {
-						finalAnswer = whole + "_" + numerator + "/" + denominator;
-					}
-				} else if (denominator <= Math.abs(numerator)) {
-					whole += numerator / denominator;
-					numerator -= (whole * denominator);
-					numerator = Math.abs(numerator);
-					int x = gcd(numerator, denominator);
-
-					int divideBy = 0;
-					whole += numerator / denominator;
-					numerator -= (whole * denominator);
-					if (x != 0) {
-						finalAnswer = whole + "_" + (numerator / x) + "/" + (denominator / x);
-					} else {
-						finalAnswer = whole + "_" + numerator + "/" + denominator;
-					}
-				}
 			}
-			System.out.println(finalAnswer);
-			return finalAnswer;
 		}
+		System.out.println(finalAnswer);
+		return finalAnswer;
+	}
 }
