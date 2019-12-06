@@ -21,6 +21,11 @@ public class FracCalc {
 		System.out.println("Program quit.");
 	}
 
+	/*
+	 * produceAnswer separates the string into numbers, then divides then between
+	 * adding, subtracting, multiplying, and dividing. It passes a String to another
+	 * method before returning the final result.
+	 */
 	public static String produceAnswer(String equation) {
 		int firstSpace = equation.indexOf(" ");
 		String firstNumber = equation.substring(0, firstSpace);
@@ -190,12 +195,12 @@ public class FracCalc {
 				}
 				int finalNumerator = newNum1 * denominator2;
 				int finalDenominator = denominator1 * newNum2;
-				if(finalNumerator < 0 && finalDenominator < 0) {
+				if (finalNumerator < 0 && finalDenominator < 0) {
 					answer = Math.abs(finalNumerator) + "/" + Math.abs(finalDenominator);
-				} else if(finalDenominator < 0 && finalNumerator > 0) {
+				} else if (finalDenominator < 0 && finalNumerator > 0) {
 					answer = "-" + finalNumerator + "/" + Math.abs(finalDenominator);
 				} else {
-				answer = finalNumerator + "/" + finalDenominator;
+					answer = finalNumerator + "/" + finalDenominator;
 				}
 				// whole number divided by a mixed number
 			} else if (secondNumber.indexOf("_") != -1 && firstNumber.indexOf("_") == -1
@@ -222,6 +227,7 @@ public class FracCalc {
 				answer = newNum1 + "/" + finalDenominator;
 			}
 		}
+		// subtracting
 		if (operator.indexOf("-") != -1) {
 			// adding two whole numbers
 			if (numerator1 == 0 && numerator2 == 0 && denominator1 == 1 && denominator2 == 1) {
@@ -320,12 +326,16 @@ public class FracCalc {
 
 			}
 		}
-		// notes: get rid of 0/x and make 0/0 not an answer
-		//System.out.println(answer);
+		// System.out.println(answer);
+		// calls method to simplify the answer
 		answer = simplifier(answer);
 		return (answer);
 	}
 
+	/*
+	 * wholeNum1 takes a String and returns the whole number in that String returns
+	 * 0 if it is a fraction
+	 */
 	public static int wholeNum1(String firstNumber) {
 		int whole1 = 0;
 		if ((firstNumber.indexOf('_') != -1)) {
@@ -344,6 +354,8 @@ public class FracCalc {
 		return whole1;
 	}
 
+	// numerator1 finds the numerator in a string and returns 0 if it is a whole
+	// number
 	public static int numerator1(String firstNumber) {
 		int numerator1 = 0;
 		if (firstNumber.indexOf('/') != -1 && firstNumber.indexOf("_") != -1) {
@@ -357,6 +369,8 @@ public class FracCalc {
 		return numerator1;
 	}
 
+	// denominator1 finds the denominator of a string; returns 1 if it's a whole
+	// number
 	public static int denominator1(String firstNumber) {
 		int denominator1 = 0;
 		if (firstNumber.indexOf('/') != -1) {
@@ -367,6 +381,11 @@ public class FracCalc {
 		return denominator1;
 	}
 
+	/*
+	 * gcd is a method that finds the greatest common divisor between the numerator
+	 * and the denominator of the final answer and returns that value, or 1 if the
+	 * fraction cannot be reduced
+	 */
 	public static int gcd(int numerator, int denominator) {
 		int gcd = 1;
 		int smaller = Math.abs(numerator);
@@ -385,6 +404,8 @@ public class FracCalc {
 		return gcd;
 	}
 
+	// simplifier takes the string passed by produceAnswer and simplifies it AND
+	// prints it
 	public static String simplifier(String answer) {
 		String finalAnswer = "";
 		int whole = wholeNum1(answer);
